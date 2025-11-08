@@ -1,0 +1,455 @@
+:root{
+  --bg:#120018; --card:#230031; --muted:#cdb9e6;
+  --accent:#00BFFF; /* primary neon blue */
+  --accent-2:#7fe9ff; /* secondary lighter blue */
+  --radius:14px;
+  --glow-c: 0, 191, 255; /* blue glow RGB */
+  --pay-pink: #f3c1cf;
+  --pay-pink-2: #f08aa6;
+}
+/* reset / base */
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:"Poppins",sans-serif;background:linear-gradient(180deg,var(--bg),#2a003f 60%);color:#fff;-webkit-font-smoothing:antialiased;position:relative;}
+
+/* ---------- LIGHTNING / GLOW BACKDROP ---------- */
+#lightning {
+  pointer-events: none;
+  position:fixed;
+  inset:0;
+  z-index:1400;
+  overflow:hidden;
+  mix-blend-mode:screen;
+}
+.light-bolt {
+  position:absolute;
+  width:380px;
+  height:380px;
+  border-radius:50%;
+  filter: blur(40px) saturate(140%);
+  opacity:0;
+  transform:translate3d(0,0,0) scale(0.7);
+  animation:boltPulse linear infinite;
+  background: radial-gradient(circle at 40% 30%, rgba(0,191,255,0.35), rgba(0,191,255,0.12) 25%, rgba(127,233,255,0.06) 45%, transparent 60%);
+}
+.light-bolt.small{ width:220px;height:220px; filter: blur(30px); }
+.light-bolt.xsmall{ width:140px;height:140px; filter: blur(22px); }
+@keyframes boltPulse {
+  0%   {opacity:0; transform:translateY(0px) scale(0.85);}
+  10%  {opacity:0.18;}
+  50%  {opacity:0.32; transform:translateY(-18px) scale(1);}
+  90%  {opacity:0.12;}
+  100% {opacity:0; transform:translateY(0px) scale(0.85);}
+}
+#lightning .flash-overlay {
+  position:absolute; inset:0; background: radial-gradient(circle at 50% 20%, rgba(255,255,255,0.18), rgba(0,191,255,0.06) 35%, transparent 55%);
+  opacity:0; transition:opacity .12s ease;
+  mix-blend-mode:screen;
+}
+.streak {
+  position:absolute;
+  width:4px;
+  height:120px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(0,191,255,0.6) 40%, rgba(0,191,255,0.0) 100%);
+  opacity:0;
+  filter: blur(2px);
+  transform: rotate(10deg) translateY(-20px);
+  transition:opacity .08s linear, transform .18s ease;
+}
+#lightning.strike .streak {
+  opacity:0.95;
+  transform: rotate(8deg) translateY(8px);
+}
+@media (max-width:600px){
+  .light-bolt{ display:block; width:140px;height:140px; filter: blur(22px); }
+  .light-bolt.small{ display:none; }
+  .streak{ display:none; }
+}
+
+/* ---------- SVG bolts ---------- */
+.bolt-svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
+.bolt-path { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke: white; stroke-width: 2.6; opacity: 0.0; filter: drop-shadow(0 0 8px rgba(180,220,255,0.9)) blur(0.2px); mix-blend-mode: screen; stroke-dasharray: 1000; stroke-dashoffset: 1000; transition: opacity .12s linear; }
+@keyframes bolt-draw { 0% { stroke-dashoffset: 1000; opacity: 1; } 40% { stroke-dashoffset: 200; opacity: 1; } 70% { stroke-dashoffset: 80; opacity: 0.8; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+#lightning.strike::before {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(circle at 50% 30%, rgba(255,255,255,0.85), rgba(127,233,255,0.12) 45%, rgba(50,160,255,0.02) 70%, transparent 85%);
+  mix-blend-mode: screen; pointer-events: none; animation: strikeFlash .18s ease-out;
+}
+@keyframes strikeFlash {
+  0% { opacity: 0; transform: scale(1); }
+  10% { opacity: 1; transform: scale(1.02); }
+  40% { opacity: 0.45; transform: scale(1.01); }
+  100% { opacity: 0; transform: scale(1); }
+}
+.bolt-path-glow { fill: none; stroke: rgba(127,233,255,0.85); stroke-width: 6; filter: blur(6px); opacity: 0; stroke-dasharray: 1000; stroke-dashoffset: 1000; }
+@media (max-width:600px){ .bolt-path { stroke-width: 1.8; } .bolt-path-glow { stroke-width: 4; } }
+
+/* ---------- UI / rest of site (unchanged, preserved) ---------- */
+/* Header */
+.header{
+  position:sticky;top:0;z-index:120;padding:10px 14px;display:flex;align-items:center;gap:12px;
+  background:linear-gradient(180deg,rgba(0,0,0,0.22),rgba(0,0,0,0.06));
+  border-bottom:1px solid rgba(255,255,255,0.03)
+}
+.menu-btn{background:transparent;border:none;color:#fff;font-size:24px;padding:8px;cursor:pointer}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px}
+.brand .gem{font-size:20px;color:var(--accent-2)}
+.header-right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.search{padding:8px 10px;border-radius:12px;border:none;background:rgba(255,255,255,0.03);color:var(--muted);width:160px}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:10px;color:var(--muted);cursor:pointer}
+.btn-primary{background:linear-gradient(90deg,var(--accent-2),#6fefff);border:none;padding:10px 14px;border-radius:12px;color:#002;cursor:pointer;box-shadow:0 8px 24px rgba(0,191,255,0.12)}
+.btn-primary:active{transform:translateY(1px)}
+.container{max-width:1100px;margin:18px auto;padding:0 16px}
+.hero{padding:22px 0;text-align:center}
+.hero h1{margin:0;font-size:28px;color:var(--accent-2)}
+.hero p{color:var(--muted);margin:10px 0 16px;line-height:1.55}
+.hero-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center}
+.promo-pill{background:linear-gradient(90deg,#28d4ff,#9beeff);padding:10px 14px;border-radius:14px;font-weight:600;color:#001}
+.banner-wrap{margin:10px 0 18px;position:relative;overflow:hidden;border-radius:14px;max-width:1100px;margin-left:auto;margin-right:auto}
+.banner-track{display:flex;transition:transform .5s ease}
+.banner-item{min-width:100%;height:200px;background:#002b44;display:flex;align-items:center;justify-content:center;position:relative}
+.banner-item img{width:100%;height:100%;object-fit:cover;display:block;border-radius:14px}
+.banner-dots{position:absolute;left:50%;transform:translateX(-50%);bottom:12px;display:flex;gap:8px}
+.dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.35);cursor:pointer}
+.dot.active{background:var(--accent-2);box-shadow:0 6px 18px rgba(0,0,0,0.5)}
+.section-title{color:var(--accent);margin:12px 0 10px;font-size:18px;text-align:left}
+.game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px;padding-bottom:40px}
+.card-game{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border-radius:12px;padding:16px 12px;text-align:center;cursor:pointer;border:1px solid rgba(255,255,255,0.03);transition:transform .14s;box-shadow:0 8px 30px rgba(0,0,0,0.25) inset}
+.card-game:focus{outline:3px solid rgba(0,191,255,0.12)}
+.card-game:hover{transform:translateY(-6px)}
+.card-game img{width:72px;height:72px;border-radius:12px;object-fit:cover;margin:8px auto}
+.gname{font-weight:700;margin-top:6px}
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:300;display:none;transition:opacity .22s}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:280px;background:linear-gradient(180deg,#001428,#00243a);padding:18px;transform:translateX(-320px);transition:transform .28s ease;z-index:320;border-right:1px solid rgba(255,255,255,0.02)}
+.sidebar.open{transform:translateX(0)}
+.sidebar .close-btn{display:flex;justify-content:flex-end}
+.sidebar .close-btn button{background:none;border:none;color:#fff;font-size:22px;cursor:pointer}
+.sidebar nav{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.sidebar a{color:#fff;text-decoration:none;padding:12px;border-radius:8px;background:rgba(255,255,255,0.02)}
+.topup-page{position:fixed;inset:0;z-index:450;display:none;align-items:flex-start;justify-content:center;padding:18px;overflow:auto;background:rgba(0,0,0,0.55)}
+.topup-page.show{display:flex}
+.topup-inner{width:100%;max-width:740px;background:linear-gradient(180deg,#00101a,#002033);border-radius:16px;padding:14px;box-shadow:0 40px 120px rgba(0,0,0,0.7)}
+.topup-head{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.topup-title{font-weight:700}
+.topup-body{margin-top:8px}
+.progress{position:relative;padding:16px 6px}
+.progress-line{height:6px;background:#00243a;border-radius:6px;opacity:0.5}
+.progress-steps{position:absolute;top:6px;left:12px;right:12px;display:flex;justify-content:space-between}
+.pstep{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#00243a;color:#cbb5ff;font-weight:700}
+.pstep.active{background:linear-gradient(90deg,var(--accent-2),#9beeff);color:#002;box-shadow:0 8px 30px rgba(127,233,255,0.12)}
+.card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:16px;border-radius:12px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.03)}
+.tp-step{display:none}
+.tp-step.active{display:block}
+.input, select{width:100%;padding:12px;border-radius:12px;border:2px solid rgba(255,255,255,0.03);background:rgba(0,0,0,0.12);color:#fff;outline:none}
+.row{display:flex;gap:10px;margin-top:12px;align-items:center}
+.price-grid,.pay-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px}
+.price-item{background:#002b44;border-radius:12px;padding:12px;cursor:pointer;border:1px solid rgba(255,255,255,0.03);transition:all .16s}
+.price-item .label{font-weight:700}
+.price-item .muted{color:var(--muted);font-size:13px}
+.price-item:hover{transform:translateY(-4px)}
+.price-item.active{background:#fff;color:#150018;box-shadow:0 10px 30px rgba(0,0,0,0.45)}
+.pay-item{display:flex;align-items:center;gap:10px;background:#002b44;border-radius:12px;padding:10px;cursor:pointer;border:1px solid rgba(255,255,255,0.03);transition:all .16s}
+.pay-item img{height:36px;width:auto}
+.pay-item .pname{font-weight:600}
+.pay-item:hover{transform:translateY(-4px)}
+.pay-item.active{background:#fff;color:#150018;box-shadow:0 10px 30px rgba(0,0,0,0.45)}
+.small{font-size:13px;color:var(--muted)}
+footer{background:#00101a;padding:36px 18px;margin-top:30px}
+.footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px}
+footer h3{color:var(--accent-2);margin-bottom:8px}
+.pay-logos{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+.pay-logos img{width:48px;border-radius:6px;background:#fff;padding:4px}
+.contact a{color:#66d1ff;display:block;margin-top:6px}
+.bottom{text-align:center;margin-top:20px;color:#a599cc}
+.center-toast{
+  position:fixed; left:50%; top:50%; transform:translate(-50%,-50%) scale(.98); z-index:999;
+  min-width:280px; max-width:90%; padding:18px; border-radius:12px; display:none; align-items:center; gap:12px;
+  color:#060012; font-weight:700; backdrop-filter: blur(6px);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 40px rgba(var(--glow-c),0.12);
+  text-align:center;
+}
+.center-toast.show{display:flex;flex-direction:column;animation:popIn .22s ease forwards}
+.center-toast.success{background:linear-gradient(90deg, rgba(127,233,255,0.98), rgba(127,233,255,0.94)); color:#fff;}
+.center-toast.fail{background:linear-gradient(90deg, rgba(255,80,80,0.98), rgba(255,130,130,0.94)); color:#fff;}
+@keyframes popIn{ from { transform:translate(-50%,-50%) scale(.96); opacity:0 } to { transform:translate(-50%,-50%) scale(1); opacity:1 } }
+.shake { animation: shakeX .36s ease; }
+@keyframes shakeX {
+  0% { transform: translate(-50%,-50%) translateX(0); }
+  20% { transform: translate(-50%,-50%) translateX(-8px); }
+  40% { transform: translate(-50%,-50%) translateX(8px); }
+  60% { transform: translate(-50%,-50%) translateX(-6px); }
+  80% { transform: translate(-50%,-50%) translateX(6px); }
+  100% { transform: translate(-50%,-50%) translateX(0); }
+}
+.music-control{
+  position:fixed; right:18px; bottom:18px; z-index:1100; display:flex; gap:8px; align-items:center;
+  background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+  padding:8px;border-radius:12px;backdrop-filter: blur(6px); box-shadow:0 8px 30px rgba(0,0,0,0.5);
+}
+.music-btn{
+  width:42px;height:42px;border-radius:10px;border:none;background:transparent;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
+.music-label{font-size:12px;color:var(--muted);padding-right:6px}
+.panel-card{box-shadow:0 20px 60px rgba(0,0,0,0.6)}
+.hide{display:none}
+.no-scroll{overflow:hidden}
+
+/* === Roblox Panel (Dark Blue Glow Version) === */
+.roblox-panel {
+  background: linear-gradient(180deg, #001628, #002b44 60%, #001d33);
+  color: #d7eaff;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 0 25px rgba(0, 191, 255, 0.25), 0 0 60px rgba(0, 191, 255, 0.08) inset;
+  border: 1px solid rgba(0, 191, 255, 0.15);
+  backdrop-filter: blur(4px);
+}
+.roblox-panel h3 {
+  color: #7fe9ff;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+.roblox-input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(127, 233, 255, 0.25);
+  background: rgba(255, 255, 255, 0.03);
+  color: #eaf9ff;
+  outline: none;
+  margin-top: 8px;
+  transition: all .2s;
+}
+.roblox-input:focus {
+  border-color: #33ccff;
+  box-shadow: 0 0 8px rgba(0,191,255,0.3);
+}
+.roblox-note {
+  background: linear-gradient(180deg, rgba(0,191,255,0.08), rgba(0,191,255,0.04));
+  border: 1px solid rgba(0,191,255,0.1);
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: #a8e8ff;
+  font-size: 13px;
+  margin-top: 10px;
+  box-shadow: 0 0 18px rgba(0,191,255,0.08) inset;
+}
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+.product-card {
+  background: linear-gradient(180deg, #002b44, #001f33);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid rgba(127, 233, 255, 0.1);
+  transition: all .16s ease;
+  box-shadow: 0 0 14px rgba(0,191,255,0.05) inset;
+}
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 20px rgba(0,191,255,0.25);
+  border-color: rgba(127,233,255,0.4);
+}
+.product-card.active {
+  background: linear-gradient(90deg, #007fff, #00bfff);
+  color: #fff;
+  border-color: rgba(127,233,255,0.8);
+  box-shadow: 0 0 30px rgba(0,191,255,0.4);
+}
+.product-price {
+  font-weight: 800;
+  margin-top: 15px;
+  font-size: 15px;
+}
+.product-label {
+  font-size: 12px;
+  color: #b7eaff;
+  margin-top: 4px;
+}
+.roblox-bottom-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1200;
+  padding: 12px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(90deg, rgba(0, 20, 40, 0.97), rgba(0, 40, 80, 0.97));
+  border-top: 1px solid rgba(0,191,255,0.2);
+  box-shadow: 0 -4px 30px rgba(0,191,255,0.15);
+  backdrop-filter: blur(6px);
+}
+.roblox-bottom-left {
+  font-size: 14px;
+  color: #a8e8ff;
+}
+.roblox-bottom-left #rbTotal {
+  font-weight: 800;
+  font-size: 18px;
+  color: #7fe9ff;
+  text-shadow: 0 0 8px rgba(0,191,255,0.4);
+}
+.roblox-buy-btn {
+  background: linear-gradient(90deg, #00bfff, #33ffff);
+  border: none;
+  color: #001018;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(0,191,255,0.45);
+  transition: all .2s ease;
+}
+.roblox-buy-btn:hover {
+  box-shadow: 0 0 25px rgba(0,191,255,0.8), 0 0 40px rgba(0,191,255,0.2);
+  transform: translateY(-2px);
+}
+.roblox-buy-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+#rbCancel {
+  color: #7fe9ff;
+  border: 1px solid rgba(0,191,255,0.3);
+  background: transparent;
+  border-radius: 10px;
+  padding: 10px 14px;
+  transition: all .2s;
+}
+#rbCancel:hover {
+  background: rgba(0,191,255,0.1);
+  box-shadow: 0 0 10px rgba(0,191,255,0.25);
+}
+@media (max-width:600px){
+  .product-grid{ grid-template-columns:repeat(2,1fr); }
+  .roblox-bottom-bar{flex-direction:column;align-items:flex-start;gap:8px;}
+}
+
+/* responsive tweaks */
+@media (max-width:600px){
+  .search{width:120px}
+  .price-grid,.pay-grid{grid-template-columns:repeat(1,1fr)}
+  .card-game img{width:60px;height:60px}
+  .banner-item{height:140px}
+  .topup-inner{margin:24px;max-width:420px}
+  .center-toast{min-width:220px;padding:14px}
+  .music-control{right:12px;bottom:12px}
+  .product-grid{ grid-template-columns:repeat(2,1fr); }
+}
+/* === Bottom Navigation === */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, rgba(0,0,20,0.92), rgba(0,0,40,0.96));
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(127,233,255,0.2);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 68px;
+  z-index: 1000;
+  box-shadow: 0 -4px 25px rgba(0,191,255,0.08);
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 13px;
+  text-decoration: none;
+  transition: all .2s ease;
+  border-radius: 10px;
+  padding: 6px 0;
+}
+
+.nav-item i {
+  font-size: 18px;
+  margin-bottom: 2px;
+}
+
+.nav-item.active {
+  color: var(--accent-2);
+  background: rgba(0,191,255,0.12);
+  box-shadow: 0 0 15px rgba(0,191,255,0.25) inset, 0 0 8px rgba(0,191,255,0.3);
+}
+
+.nav-item:hover {
+  color: var(--accent);
+}
+
+.music-item {
+  background: rgba(127,233,255,0.1);
+  border: 1px solid rgba(0,191,255,0.3);
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0,191,255,0.2);
+  color: var(--accent-2);
+}
+
+/* === FIX NAVBAR DAN POPUP MUSIK === */
+body {
+  padding-bottom: 80px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+#overlay,
+#topupPage,
+#historyPanel {
+  pointer-events: none;
+}
+
+#overlay.open,
+#topupPage.show,
+#historyPanel.show {
+  pointer-events: auto;
+}
+
+/* Navbar di atas segalanya */
+.bottom-nav {
+  z-index: 99999 !important;
+}
+
+.nav-item {
+  cursor: pointer;
+}
+
+/* Popup Musik */
+.music-popup {
+  position: fixed;
+  bottom: 75px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 30, 0.95);
+  border: 1px solid rgba(127, 233, 255, 0.3);
+  border-radius: 20px;
+  padding: 10px 20px;
+  display: none;
+  z-index: 99998;
+  box-shadow: 0 0 20px rgba(0, 191, 255, 0.25);
+}
+
+.music-popup.show {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.music-popup button {
+  background: none;
+  border: none;
+  color: #7fe9ff;
+  font-size: 20px;
+  cursor: pointer;
+}

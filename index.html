@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Petir Biru Store - Top Up ⚡</title>
+
+  <!-- Fonts & icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- local stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- LIGHTNING / GLOW LAYER (visual only, no sound) -->
+<div id="lightning" aria-hidden="true">
+  <div class="light-bolt" data-pos="1" style="animation-duration:9s; animation-delay:0s"></div>
+  <div class="light-bolt small" data-pos="2" style="animation-duration:11s; animation-delay:1.5s"></div>
+  <div class="light-bolt" data-pos="3" style="animation-duration:10s; animation-delay:3s"></div>
+  <div class="light-bolt small" data-pos="4" style="animation-duration:12s; animation-delay:5s"></div>
+  <div class="light-bolt xsmall" data-pos="5" style="animation-duration:8s; animation-delay:2s"></div>
+  <div class="flash-overlay"></div>
+  <div class="streak" style="left:22%; top:6%; height:160px;"></div>
+  <div class="streak" style="left:68%; top:10%; height:180px; transform: rotate(-6deg) translateY(-20px)"></div>
+  <div class="bolt-svg" id="boltSvgContainer" aria-hidden="true"></div>
+</div>
+
+<header class="header">
+  <button id="menuBtn" class="menu-btn" aria-label="Buka menu">☰</button>
+  <div class="brand"><span class="gem">💎</span> Petir Biru Store</div>
+  <div class="header-right" style="margin-left:auto">
+    <input id="searchInput" class="search" placeholder="Cari game (Roblox, FF...)" />
+    <button id="historyBtn" class="btn-ghost">Riwayat</button>
+  </div>
+</header>
+
+<div id="overlay" class="sidebar-overlay" aria-hidden="true"></div>
+<aside id="sidebar" class="sidebar" aria-hidden="true" role="menu">
+  <div class="close-btn"><button id="closeSidebar" aria-label="Tutup menu">✕</button></div>
+  <nav>
+    <a href="#home" data-target="home" class="side-link">Beranda</a>
+    <a href="#promo" data-target="promo" class="side-link">Promo</a>
+    <a href="#panduan" data-target="panduan" class="side-link">Panduan</a>
+    <a href="#kontak" data-target="kontak" class="side-link">Kontak</a>
+    <a href="#tentang" data-target="tentang" class="side-link">Tentang</a>
+  </nav>
+</aside>
+
+<main class="container" id="mainContent">
+  <section id="home" class="hero" tabindex="-1">
+    <h1>Petir Biru Store</h1>
+    <p>Platform top-up cepat & aman untuk semua kalangan — dari pemain muda sampai dewasa. Harga bersahabat, proses instan max 1x24 jam, dan dukungan CS siap membantu.</p>
+    <div class="hero-actions">
+      <button id="allGamesBtn" class="btn-primary">Lihat Semua Game</button>
+      <button id="promoBtn" class="promo-pill">PROMO: Diskon all 5% S&K berlaku</button>
+    </div>
+    <div class="banner-wrap" aria-hidden="false">
+      <div id="bannerTrack" class="banner-track">
+        <div class="banner-item"><img src="aset/banner1.jpg" alt="Promo 1"></div>
+        <div class="banner-item"><img src="aset/banner2.jpeg" alt="Promo 2"></div>
+        <div class="banner-item"><img src="aset/banner3.jpeg" alt="Promo 3"></div>
+      </div>
+      <div id="bannerDots" class="banner-dots" aria-hidden="false"></div>
+    </div>
+  </section>
+
+  <section id="games" class="game-section">
+    <h3 class="section-title">Game Populer</h3>
+    <div id="gameList" class="game-grid" aria-live="polite"></div>
+  </section>
+
+  <section id="promo" style="padding:18px 0">
+    <h3 style="color:var(--accent-2)">Promo Terbaru</h3>
+    <p class="small" style="max-width:780px">Ikuti channel PB Store dan ajak teman untuk mendapatkan promo 5% cashback pada pembelian pertama yang memenuhi syarat.</p>
+  </section>
+
+  <section id="panduan" style="padding:18px 0">
+    <h3 style="color:var(--accent-2)">Panduan Singkat</h3>
+    <ol class="small" style="max-width:780px; color:var(--muted); margin-top:8px; line-height:1.6">
+      <li>Pilih game → Masukkan Player ID → Pilih nominal → Bayar.</li>
+      <li>Pastikan Player ID benar — kami sediakan garansi jika terjadi kesalahan.</li>
+      <li>Jika butuh bantuan, hubungi CS melalui email atau WhatsApp.</li>
+    </ol>
+  </section>
+</main>
+
+<!-- topup modal (shared) -->
+<div id="topupPage" class="topup-page" aria-hidden="true">
+  <div id="topupInner" class="topup-inner" role="dialog" aria-modal="true" aria-labelledby="topupTitle">
+    <div class="topup-head">
+      <button id="closeTopup" class="btn-ghost" aria-label="Kembali">←</button>
+      <div id="topupTitle" class="topup-title">Top Up</div>
+      <div style="width:36px"></div>
+    </div>
+
+    <div id="topupBody" class="topup-body">
+      <!-- default original flow (kept) -->
+      <div id="defaultFlow">
+        <div class="progress">
+          <div class="progress-line"></div>
+          <div class="progress-steps">
+            <div class="pstep active" data-step="1">1</div>
+            <div class="pstep" data-step="2">2</div>
+            <div class="pstep" data-step="3">3</div>
+          </div>
+        </div>
+
+        <!-- Step 1 -->
+        <div id="tp-step-1" class="tp-step active">
+          <div class="card">
+            <h3>1️⃣ Masukkan Player ID</h3>
+            <input id="playerInput" class="input" placeholder="Masukkan ID / Username" autocomplete="off">
+            <div class="row"><button id="toStep2" class="btn-primary full">Lanjut ke Nominal</button></div>
+          </div>
+        </div>
+
+        <!-- Step 2 (DROPDOWN nominal) -->
+        <div id="tp-step-2" class="tp-step">
+          <div class="card">
+            <h3>2️⃣ Pilih Nominal</h3>
+            <label for="nominalSelect" class="small" style="color:var(--muted)">Pilih paket/top-up</label>
+            <select id="nominalSelect" class="input" aria-label="Pilih nominal">
+              <option value="">-- Pilih nominal --</option>
+            </select>
+            <div class="row"><button id="toStep3" class="btn-primary full" disabled>Lanjut ke Pembayaran</button></div>
+          </div>
+        </div>
+
+        <!-- Step 3 (metode pagamento) -->
+        <div id="tp-step-3" class="tp-step">
+          <div class="card">
+            <h3>3️⃣ Pilih Pembayaran</h3>
+            <div id="payGrid" class="pay-grid"></div>
+            <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
+              <button id="buyBtn" class="btn-primary full" disabled>Beli Sekarang (WA)</button>
+              <button id="cancelTopup" class="btn-ghost full">Batal</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="orderMsg" class="small" aria-live="polite"></div>
+      </div>
+      <!-- roblox panel will be injected dynamically into #robloxFlow -->
+      <div id="robloxFlow" class="hide"></div>
+    </div>
+  </div>
+</div>
+
+<div id="toastSuccess" class="center-toast success" role="status" aria-live="polite">
+  <div style="font-size:28px">✅</div>
+  <div style="margin-top:6px">Transaksi Berhasil!</div>
+</div>
+<div id="toastFail" class="center-toast fail" role="alert" aria-live="assertive">
+  <div style="font-size:28px">❌</div>
+  <div style="margin-top:6px">Lengkapi data dulu!</div>
+</div>
+
+<footer id="kontak" style="scroll-margin-top:90px">
+  <div class="footer-grid" style="max-width:1100px;margin:0 auto;padding:30px 18px">
+    <div>
+      <h3 id="tentang">Tentang Petir Biru Store</h3>
+      <p class="small">Petir Biru Store hadir untuk semua gamer — cepat, aman, dan mudah. Top-up tanpa ribet, dukungan CS responsif, dan garansi bila terjadi kesalahan.</p>
+    </div>
+
+    <div>
+      <h3>Keunggulan</h3>
+      <ul class="small" style="color:var(--muted);line-height:1.6">
+        <li>🔒 Garansi 30% uang kembali jika ID salah (pastikan kembali sebelum bayar)</li>
+        <li>🔁 Garansi uang kembali jika ada kesalahan sistem S&K berlaku</li>
+        <li>⚡ Proses instan max 1x24 jam</li>
+        <li>💬 CS aktif 24 jam</li>
+      </ul>
+    </div>
+
+    <div>
+      <h3>Metode Pembayaran</h3>
+      <div class="pay-logos">
+        <img src="aset/dana.jpeg" alt="dana">
+        <img src="aset/ovo.jpeg" alt="ovo">
+        <img src="aset/gopay.jpeg" alt="gopay">
+        <img src="aset/qris.jpeg" alt="qris">
+      </div>
+    </div>
+
+    <div class="contact">
+      <h3>Kontak & Bantuan</h3>
+      <p class="small">Email: <a href="mailto:biasa0048@gmail.com" id="mailLink">biasa0048@gmail.com</a></p>
+      <p class="small">WhatsApp CS:
+        <a href="https://wa.me/6288279019829" id="waLink" target="_blank" rel="noopener"> +62 882-7901-9829</a></p>
+      <p class="small" style="margin-top:8px">Follow channel PB Store untuk promo & referral 5%.</p>
+    </div>
+  </div>
+  <div class="bottom">© 2025 Petir Biru Store • All rights reserved</div>
+</footer>
+
+<div id="historyPanel" class="sidebar-overlay hide" style="align-items:flex-end">
+  <div class="panel-card" style="width:100%;max-width:720px;background:linear-gradient(180deg,#0f0b1a,#171029);border-radius:12px;padding:14px;margin:12px">
+    <button id="closeHistory" class="close-btn" style="float:right;background:none;border:none;color:#fff;font-size:20px">✕</button>
+    <h3>Riwayat Top-up</h3>
+    <div id="historyList" class="small" style="margin-top:8px;color:var(--muted)"></div>
+    <div style="margin-top:12px"><button id="clearHistory" class="btn-ghost">Hapus Riwayat</button></div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav" id="bottomNav">
+  <a href="#home" class="nav-item active" data-target="home"><i class="fa fa-home"></i><span>Home</span></a>
+  <a href="#riwayat" class="nav-item" data-target="riwayat"><i class="fa fa-clock-rotate-left"></i><span>Riwayat</span></a>
+  <button id="musicNavBtn" class="nav-item music-item" aria-label="Musik"><i class="fa fa-music"></i><span>Musik</span></button>
+  <a href="#profil" class="nav-item" data-target="profil"><i class="fa fa-user"></i><span>Profil</span></a>
+</nav>
+
+<!-- MUSIC POPUP (appears EXACTLY above navbar) -->
+<div id="musicPopup" class="music-popup hidden" aria-hidden="true" role="dialog" aria-label="Kontrol musik">
+  <button id="musicPrev" class="mp-btn" aria-label="Sebelumnya"><i class="fa fa-backward"></i></button>
+  <button id="musicPlay" class="mp-btn" aria-label="Play/Pause"><i class="fa fa-play"></i></button>
+  <button id="musicNext" class="mp-btn" aria-label="Selanjutnya"><i class="fa fa-forward"></i></button>
+  <button id="musicMuteBtn" class="mp-btn" aria-label="Mute/Unmute"><i class="fa fa-volume-xmark"></i></button>
+</div>
+
+<!-- local script -->
+<script src="script.js" defer></script>
+</body>
+</html>
