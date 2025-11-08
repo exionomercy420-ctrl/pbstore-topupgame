@@ -453,3 +453,18 @@ body {
   font-size: 20px;
   cursor: pointer;
 }
+
+/* --- Aturan tambahan: tampilkan tombol hanya setelah pilih produk --- */
+.roblox-bottom-bar {
+  display: none !important;
+  opacity: 0;
+  transform: translateY(15px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* kalau ada produk aktif, tampilkan */
+body:has(.product-card.active) .roblox-bottom-bar {
+  display: flex !important;
+  opacity: 1;
+  transform: translateY(0);
+}

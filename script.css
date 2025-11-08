@@ -772,17 +772,17 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
   $("#cancelTopup")?.addEventListener("click", ()=> showTopup(false));
 
-  // history open
-  $("#historyBtn")?.addEventListener("click", ()=> {
-    const panel = $("#historyPanel");
-    if(!panel) return;
-    panel.classList.remove('hide');
-    panel.classList.add('show');
-    panel.style.display = 'flex';
-    $("#overlay")?.classList.add('show');
-    renderHistory();
-    attachCloseHandlers(); // reattach close (safe)
-  });
+// history open (moved to bottom navbar)
+$("#historyNavBtn")?.addEventListener("click", ()=> {
+  const panel = $("#historyPanel");
+  if(!panel) return;
+  panel.classList.remove('hide');
+  panel.classList.add('show');
+  panel.style.display = 'flex';
+  $("#overlay")?.classList.add('show');
+  renderHistory();
+  attachCloseHandlers(); // reattach close (safe)
+});
 
   // clear history
   $("#clearHistory")?.addEventListener("click", ()=> {
